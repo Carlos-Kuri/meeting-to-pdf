@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeting → PDF</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
+        <path d="M6 2h8l5 5v15H6z" fill="#eaf1f8" stroke="#1f4e79" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M14 2v5h5" fill="none" stroke="#1f4e79" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M9 12h7M9 15.5h7M9 19h4" stroke="#1f4e79" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Meeting → PDF</h1>
+        <p class="tagline">Turn raw meeting notes into a polished PDF</p>
+      </div>
+    </div>
+    <div class="status-area" id="statusArea">
+      <span id="statusDot" class="dot dot-unknown"></span>
+      <span id="statusText">Checking local AI…</span>
+      <button id="startOllamaBtn" class="btn btn-small btn-warn" hidden>▶ Start Ollama</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- INPUT COLUMN -->
+    <section class="panel input-panel">
+      <h2>1 · Your notes</h2>
+
+      <!-- AI source -->
+      <div class="source-box">
+        <div class="source-grid">
+          <label>
+            <span>AI source</span>
+            <select id="providerSelect"></select>
+          </label>
+          <label>
+            <span>Model</span>
+            <select id="modelSelect"></select>
+            <input type="text" id="modelInput" placeholder="model name" hidden />
+          </label>
+        </div>
+        <div class="source-grid" id="keyRow" hidden>
+          <label id="apiKeyRow" class="full" hidden>
+            <span>API key <em>(stored only in your browser)</em></span>
+            <input type="password" id="apiKey" placeholder="paste your free API key" autocomplete="off" />
+          </label>
+          <label id="baseUrlRow" class="full" hidden>
+            <span>Base URL</span>
+            <input type="text" id="baseUrl" placeholder="https://your-server/v1" autocomplete="off" />
+          </label>
+        </div>
+        <p id="sourceHint" class="hint" hidden></p>
+      </div>
+
+      <div class="meta-grid">
+        <label>
+          <span>Meeting title</span>
+          <input type="text" id="title" placeholder="e.g. Q4 Planning Sync" />
+        </label>
+        <label>
+          <span>Date</span>
+          <input type="text" id="date" placeholder="e.g. Nov 5, 2026" />
+        </label>
+        <label class="full">
+          <span>Attendees <em>(optional)</em></span>
+          <input type="text" id="attendees" placeholder="e.g. Ana, Bob, Carlos" />
+        </label>
+      </div>
+
+      <label class="notes-label">
+        <span>Paste your meeting notes</span>
+        <textarea
+          id="notes"
+          placeholder="Paste raw notes here — bullet points, messy text, anything. The AI will organize it into: summary, key decisions, action items, discussion topics and open questions."
+        ></textarea>
+      </label>
+
+      <div class="actions">
+        <button id="generateBtn" class="btn btn-primary">Organize notes →</button>
+        <button id="clearBtn" class="btn btn-ghost">Clear</button>
+        <span id="inputHint" class="hint"></span>
+      </div>
+      <div id="inputError" class="error" hidden></div>
+    </section>
+
+    <!-- PREVIEW COLUMN -->
+    <section class="panel preview-panel">
+      <div class="preview-head">
+        <h2>2 · Preview &amp; download</h2>
+        <div class="head-actions">
+          <button id="downloadBtn" class="btn btn-primary" hidden>↓ Download PDF</button>
+          <button id="saveFolderBtn" class="btn btn-ghost" hidden>Guardar en carpeta</button>
+        </div>
+      </div>
+
+      <div id="saveMsg" class="save-msg" hidden></div>
+
+      <!-- Fallback folder panel (browsers without File System Access API) -->
+      <div id="savePanel" class="save-panel" hidden>
+        <p class="save-panel-title">Guardar PDF en una carpeta</p>
+        <input type="text" id="savePath" placeholder="~/Downloads" autocomplete="off" />
+        <div class="chips">
+          <button class="chip" data-path="~/Downloads">Downloads</button>
+          <button class="chip" data-path="~/Documents">Documents</button>
+          <button class="chip" data-path="~/Desktop">Desktop</button>
+          <button class="chip" data-path="~/Documents/meeting-pdfs">meeting-pdfs (se crea)</button>
+        </div>
+        <div class="panel-actions">
+          <button id="saveConfirmBtn" class="btn btn-primary">Guardar aquí</button>
+          <button id="saveCancelBtn" class="btn btn-ghost">Cancelar</button>
+        </div>
+        <div id="savePanelMsg" class="error" hidden></div>
+      </div>
+
+      <div id="placeholder" class="placeholder">
+        <p>Your organized meeting document will appear here.</p>
+        <p class="muted">Summary · Decisions · Action items · Topics · Open questions</p>
+      </div>
+
+      <div id="spinner" class="spinner" hidden>
+        <div class="spin"></div>
+        <p>Organizing your notes with <b id="spinModel"></b>…</p>
+        <p id="spinProgress" class="progress-line">starting…</p>
+        <p class="muted">Streaming live progress below.</p>
+      </div>
+
+      <article id="preview" class="preview" hidden></article>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

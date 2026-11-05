@@ -1,0 +1,21 @@
+{
+  "name": "meeting-to-pdf",
+  "version": "1.0.0",
+  "description": "Turn raw meeting notes into well-organized PDFs using a local AI model (Ollama) — fully offline.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "meeting-notes",
+    "pdf",
+    "ollama",
+    "local-ai",
+    "offline"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.3.0",
+    "pdfmake": "^0.3.13"
+  }
+}
